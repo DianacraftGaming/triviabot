@@ -1,0 +1,14 @@
+{
+  "name": "Trivia Bot",
+  "description": "An unofficial port of the Wild Life Trivia Bot!",
+  "authors": [
+    "Original Trivia Bot model by InkGhoul_",
+    "Recreated by DianacraftGaming",
+    "",
+    "Libraries Used:",
+    "- EZAnims by JimmyHelp",
+    "- GSAnimBlend by Grandpa Scout",
+    "- KattDynamicCrosshair by Katt"
+  ],
+  "color": "#ad3d3b"
+}
