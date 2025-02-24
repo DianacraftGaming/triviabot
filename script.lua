@@ -22,6 +22,7 @@ models.model.snail:setVisible(false)
 local dots = true
 local dotsFrame = 0
 local dotsLoading = false
+local temp = ""
 
 local mainPage = action_wheel:newPage()
 local togglesPage = action_wheel:newPage()
@@ -86,6 +87,8 @@ local toMainFromQuiz = quizPage:newAction()
         animations.model.ticking:stop()
         quiz = false
         dots = true
+        dotsLoading = false
+        animations.model.loading:stop()
         end)
     :title("Back")
 
@@ -144,6 +147,8 @@ micToggle:onLeftClick(function()
     end
 end)
 quizStart:onLeftClick(function()
+    dotsLoading = false
+    animations.model.loading:stop()
     if quiz then
         models.model.root.Head.clock:setVisible(false)
         models.model.root.Head.plane:setUV(12 / 64 , 0)
@@ -166,23 +171,31 @@ quizStart:onLeftClick(function()
 end)
 winAction:onLeftClick(function()
     models.model.root.Head.clock:setVisible(false)
-    models.model.root.Head.plane:setUV(0 , 11/66)
+    models.model.root.Head.plane:setUV(12 / 64 , 0)
     animations.model.ticking:stop()
     quizStart:title("Start Quiz")
     quizStart:setHoverColor(239 / 255, 92 / 255, 84 / 255)
     quizStart:setColor(119 / 255, 46 / 255, 42 / 255)
     quiz = false
     dots = false
+    dotsLoading = true
+    dotsFrame = 0
+    animations.model.loading:play()
+    temp = "win"
 end)
 loseAction:onLeftClick(function()
     models.model.root.Head.clock:setVisible(false)
-    models.model.root.Head.plane:setUV(12/64 , 11/66)
+    models.model.root.Head.plane:setUV(12 / 64 , 0)
     animations.model.ticking:stop()
     quizStart:title("Start Quiz")
     quizStart:setHoverColor(239 / 255, 92 / 255, 84 / 255)
     quizStart:setColor(119 / 255, 46 / 255, 42 / 255)
     quiz = false
     dots = false
+    dotsLoading = true
+    dotsFrame = 0
+    animations.model.loading:play()
+    temp = "lose"
 end)
 
 -- EVERYTHING ELSE
@@ -217,17 +230,29 @@ function events.tick()
     --sounds:playSound("block.note_block.snare", player:getPos(), 1, 1, false)
     sounds:playSound("block.note_block.hat", player:getPos(), 2, 1.5, false)
   end
-
+  
   if dotsLoading then
+    dotsFrame = dotsFrame+1
+    if dotsFrame == 60 then 
+        dotsFrame = 0
+        dotsLoading = false 
+        if temp == "win" then 
+            models.model.root.Head.plane:setUV(0 , 11/66)
+        else 
+            models.model.root.Head.plane:setUV(12/64 , 11/66)
+        end
+    end
   else
     if world.getTime() % 5 == 0 then 
         dotsFrame = dotsFrame+1 
+        if dotsFrame > 21 then dotsFrame = 1 end
         if dotsFrame == 21 then dotsFrame = 0 end
     end
-    models.model.root.Head.green_dot:setVisible(dots and (dotsFrame < 3 or dotsFrame > 4))
-    models.model.root.Head.yellow_dot:setVisible(dots and (dotsFrame < 2 or dotsFrame > 5))
-    models.model.root.Head.red_dot:setVisible(dots and (dotsFrame < 1 or dotsFrame > 6))
   end
+  models.model.root.Head.dots.green_dot:setVisible(dots and (dotsFrame < 3 or dotsFrame > 4))
+  models.model.root.Head.dots.yellow_dot:setVisible(dots and (dotsFrame < 2 or dotsFrame > 5))
+  models.model.root.Head.dots.red_dot:setVisible(dots and (dotsFrame < 1 or dotsFrame > 6))
+  models.model.root.Head.guess:setVisible(dotsLoading)
 end
 
 --render event, called every time your avatar is rendered
