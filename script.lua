@@ -1,4 +1,7 @@
--- Auto generated script file --
+-- DEPENDENCY SETUP
+local anims = require("libs/EZAnims")
+local animmodel = anims:addBBModel(animations.model)
+
 
 -- VANILLA STUFF
 vanilla_model.ALL:setVisible(false)
@@ -40,10 +43,10 @@ local toEmotes = mainPage:newAction()
 local toQuiz = mainPage:newAction()
     :item("minecraft:clock")
     :onLeftClick(function()action_wheel:setPage(quizPage)end)
-    :title("Quiz Related [WIP]")
+    :title("Quiz Related")
 local snailToggle = mainPage:newAction()
     :item("minecraft:player_head{SkullOwner:"..username.."}")
-    :title("VHSnail Toggle")
+    :title("VHSnail Toggle [WIP]")
     :setHoverColor(239 / 255, 92 / 255, 84 / 255)
     :setColor(119 / 255, 46 / 255, 42 / 255)
 
@@ -89,6 +92,9 @@ local toMainFromQuiz = quizPage:newAction()
         dots = true
         dotsLoading = false
         animations.model.loading:stop()
+        animations.model.cheer:stop()
+        animations.model.madpoint:stop()
+        animations.model.idling:play()
         end)
     :title("Back")
 
@@ -202,7 +208,7 @@ end)
 
 --entity init event, used for when the avatar entity is loaded for the first time
 function events.entity_init()
-  
+    
 end
 
 --tick event, called 20 times per second
@@ -230,17 +236,25 @@ function events.tick()
     --sounds:playSound("block.note_block.snare", player:getPos(), 1, 1, false)
     sounds:playSound("block.note_block.hat", player:getPos(), 2, 1.5, false)
   end
+
+  if player:getVelocity():length() > 0.02 then
+    animations.model.cheer:stop()
+    animations.model.madpoint:stop()
+  end
   
   if dotsLoading then
     dotsFrame = dotsFrame+1
     if dotsFrame == 60 then 
-        dotsFrame = 0
-        dotsLoading = false 
         if temp == "win" then 
             models.model.root.Head.plane:setUV(0 , 11/66)
+            animations.model.cheer:play()
         else 
             models.model.root.Head.plane:setUV(12/64 , 11/66)
+            animations.model.madpoint:play()
         end
+        animations.model.idling:stop()
+        dotsFrame = 0
+        dotsLoading = false 
     end
   else
     if world.getTime() % 5 == 0 then 
@@ -252,7 +266,7 @@ function events.tick()
   models.model.root.Head.dots.green_dot:setVisible(dots and (dotsFrame < 3 or dotsFrame > 4))
   models.model.root.Head.dots.yellow_dot:setVisible(dots and (dotsFrame < 2 or dotsFrame > 5))
   models.model.root.Head.dots.red_dot:setVisible(dots and (dotsFrame < 1 or dotsFrame > 6))
-  models.model.root.Head.guess:setVisible(dotsLoading)
+  models.model.root.Head.guess:setVisible(dotsLoading and dotsFrame < 60)
 end
 
 --render event, called every time your avatar is rendered
