@@ -83,24 +83,25 @@ local loseAction = quizPage:newAction()
     :title("Incorrect Response!")
 local toMainFromQuiz = quizPage:newAction()
     :item("minecraft:barrier")
-    :onLeftClick(function()
-        action_wheel:setPage(mainPage)
-        models.model.root.Head.clock:setVisible(false)
-        models.model.root.Head.plane:setUV(12/64 , 0)
-        animations.model.ticking:stop()
-        quiz = false
-        dots = true
-        dotsLoading = false
-        animations.model.loading:stop()
-        animations.model.cheer:stop()
-        animations.model.madpoint:stop()
-        animations.model.idling:play()
-        end)
     :title("Back")
+function pings.pingmainquiz()
+    action_wheel:setPage(mainPage)
+    models.model.root.Head.clock:setVisible(false)
+    models.model.root.Head.plane:setUV(12/64 , 0)
+    animations.model.ticking:stop()
+    quiz = false
+    dots = true
+    dotsLoading = false
+    animations.model.loading:stop()
+    animations.model.cheer:stop()
+    animations.model.madpoint:stop()
+    animations.model.idling:play()
+end
+toMainFromQuiz:onLeftClick(pings.pingmainquiz)
 
 action_wheel:setPage(mainPage)
 
-snailToggle:onLeftClick(function()
+function pings.snailtoggle()
     if snail then
         models.model.root:setVisible(true)
         models.model.snail:setVisible(false)
@@ -122,9 +123,10 @@ snailToggle:onLeftClick(function()
         toEmotes:setHoverColor(239 / 255, 92 / 255, 84 / 255):setColor(119 / 255, 46 / 255, 42 / 255):onLeftClick()
         toQuiz:setHoverColor(239 / 255, 92 / 255, 84 / 255):setColor(119 / 255, 46 / 255, 42 / 255):onLeftClick()
     end
-end)
+end
+snailToggle:onLeftClick(pings.snailtoggle)
 
-emissionToggle:onLeftClick(function()
+function pings.emissiontoggle()
     if emission then
         models:setSecondaryRenderType("NONE")
         emission = false
@@ -136,8 +138,10 @@ emissionToggle:onLeftClick(function()
         emissionToggle:setHoverColor(106 / 255, 232 / 255, 107 / 255)
         emissionToggle:setColor(53 / 255, 116 / 255, 53 / 255)
     end
-end)
-micToggle:onLeftClick(function()
+end
+emissionToggle:onLeftClick(pings.emissiontoggle)
+
+function pings.mictoggle()
     if microphone then
         vanilla_model.HELD_ITEMS:setVisible(true)
         models.model.root.Body.arm_r.held.mic:setVisible(false)
@@ -151,8 +155,10 @@ micToggle:onLeftClick(function()
         micToggle:setHoverColor(106 / 255, 232 / 255, 107 / 255)
         micToggle:setColor(53 / 255, 116 / 255, 53 / 255)
     end
-end)
-quizStart:onLeftClick(function()
+end
+micToggle:onLeftClick(pings.mictoggle)
+
+function pings.startquiz()
     dotsLoading = false
     animations.model.loading:stop()
     if quiz then
@@ -174,8 +180,10 @@ quizStart:onLeftClick(function()
         quizStart:setHoverColor(106 / 255, 232 / 255, 107 / 255)
         quizStart:setColor(53 / 255, 116 / 255, 53 / 255)
     end
-end)
-winAction:onLeftClick(function()
+end
+quizStart:onLeftClick(pings.startquiz)
+
+function pings.win()
     models.model.root.Head.clock:setVisible(false)
     models.model.root.Head.plane:setUV(12 / 64 , 0)
     animations.model.ticking:stop()
@@ -186,10 +194,15 @@ winAction:onLeftClick(function()
     dots = false
     dotsLoading = true
     dotsFrame = 0
+    animations.model.madpoint:stop()
+    animations.model.cheer:stop()
+    animations.model.idling:play()
     animations.model.loading:play()
     temp = "win"
-end)
-loseAction:onLeftClick(function()
+end
+winAction:onLeftClick(pings.win)
+
+function pings.lose()
     models.model.root.Head.clock:setVisible(false)
     models.model.root.Head.plane:setUV(12 / 64 , 0)
     animations.model.ticking:stop()
@@ -200,9 +213,13 @@ loseAction:onLeftClick(function()
     dots = false
     dotsLoading = true
     dotsFrame = 0
+    animations.model.madpoint:stop()
+    animations.model.cheer:stop()
+    animations.model.idling:play()
     animations.model.loading:play()
     temp = "lose"
-end)
+end
+loseAction:onLeftClick(pings.lose)
 
 -- EVERYTHING ELSE
 
